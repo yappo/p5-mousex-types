@@ -12,4 +12,5 @@ build_requires 'Test::Exception';
 build_requires 'Scalar::Util';
 
 auto_include;
+auto_set_repository;
 WriteAll;
