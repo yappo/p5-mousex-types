@@ -1,4 +1,7 @@
 Revision history for Perl extension MouseX::Types
 
+0.02    2009-10-15T19:01:23+09:00
+        - no longer used class_type on test scripts
+
 0.01    2009-02-06T08:09:43+09:00
         - split dist from Mouse 0.14
