@@ -18,7 +18,7 @@ use Scalar::Util qw/isweak/;
     package Types;
     use MouseX::Types -declare => [qw/Foo/];
     use MouseX::Types::Mouse 'HashRef';
-    class_type Foo, { class => 'Headers' };
+    subtype Foo, as 'Headers';
     coerce Foo,
         from HashRef,
         via {
