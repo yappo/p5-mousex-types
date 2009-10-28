@@ -23,7 +23,7 @@ sub import {
         }
     }
 
-    return Mouse::Util::TypeConstraints->export_to_level(1, $class);
+    Mouse::Util::TypeConstraints->import({ into => $caller }, $class);
 }
 
 sub _import {
