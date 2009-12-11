@@ -3,8 +3,7 @@ use strict;
 use warnings;
 our $VERSION = '0.01';
 
-require Mouse::Util::TypeConstraints;
-use MouseX::Types::TypeDecorator;
+use Mouse::Util::TypeConstraints ();
 
 sub import {
     my($class, %args) = @_;
@@ -12,7 +11,7 @@ sub import {
     my $type_class = caller;
 
     no strict 'refs';
-    *{$type_class . '::import'} = \&_import;
+    *{$type_class . '::import'} = \&_do_import;
     push @{$type_class . '::ISA'}, 'MouseX::Types::Base';
 
     if (defined $args{'-declare'} && ref($args{'-declare'}) eq 'ARRAY') {
@@ -26,7 +25,7 @@ sub import {
     Mouse::Util::TypeConstraints->import({ into => $type_class });
 }
 
-sub _import {
+sub _do_import {
     my($type_class, @types) = @_;
 
     my $into = caller;
@@ -51,6 +50,7 @@ sub _import {
 }
 
 1;
+__END__
 
 =head1 NAME
 
@@ -129,7 +129,13 @@ with plenty of code borrowed from L<MooseX::Types>
 
 =head1 REPOSITORY
 
-  svn co http://code2.0beta.co.uk/moose/svn/MouseX-Types/trunk MouseX-Types
+  git clone git://github.com/yappo/p5-mousex-types.git MouseX-Types
+
+=head1 SEE ALSO
+
+L<Mouse>
+
+L<MooseX::Types>
 
 =head1 LICENSE
 
