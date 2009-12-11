@@ -7,34 +7,37 @@ require Mouse::Util::TypeConstraints;
 use MouseX::Types::TypeDecorator;
 
 sub import {
-    my $class  = shift;
-    my %args   = @_;
-    my $caller = caller(0);
+    my($class, %args) = @_;
+
+    my $type_class = caller;
 
     no strict 'refs';
-    *{"$caller\::import"} = sub { my $pkg = caller(0); _import($caller, $pkg, @_) };
-    push @{"$caller\::ISA"}, 'MouseX::Types::Base';
+    *{$type_class . '::import'} = \&_import;
+    push @{$type_class . '::ISA'}, 'MouseX::Types::Base';
 
     if (defined $args{'-declare'} && ref($args{'-declare'}) eq 'ARRAY') {
-        my $storage = $caller->type_storage($caller);
+        my $storage = $type_class->type_storage();
         for my $name (@{ $args{'-declare'} }) {
-            my $fq_name = $storage->{$name} = "$caller\::$name";
+            my $fq_name = $storage->{$name} = $type_class . '::' . $name;
             *{$fq_name} = sub () { $fq_name };
         }
     }
 
-    Mouse::Util::TypeConstraints->import({ into => $caller });
+    Mouse::Util::TypeConstraints->import({ into => $type_class });
 }
 
 sub _import {
-    my($type_class, $pkg, undef, @types) = @_;
+    my($type_class, @types) = @_;
 
-    no strict 'refs';
+    my $into = caller;
+
     for my $name (@types) {
         my $fq_name = $type_class->type_storage->{$name};
 
         my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name) || $fq_name;
-        *{"$pkg\::$name"} = sub () { $obj };
+
+        no strict 'refs';
+        *{$into . '::' . $name} = sub () { $obj };
     }
 }
 
