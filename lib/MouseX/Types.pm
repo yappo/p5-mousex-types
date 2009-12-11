@@ -32,7 +32,8 @@ sub _import {
     my $into = caller;
 
     for my $name (@types) {
-        my $fq_name = $type_class->type_storage->{$name};
+        my $fq_name = $type_class->type_storage->{$name}
+            || Carp::croak(qq{"$name" is not exported by the $type_class module});
 
         my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name) || $fq_name;
 
