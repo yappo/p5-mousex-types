@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More tests => 13;
 
-{
+BEGIN{
     package Types;
     use strict;
     use warnings;

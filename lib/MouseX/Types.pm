@@ -18,21 +18,22 @@ sub import {
     if (defined $args{'-declare'} && ref($args{'-declare'}) eq 'ARRAY') {
         my $storage = $caller->type_storage($caller);
         for my $name (@{ $args{'-declare'} }) {
-            my $obj = $storage->{$name} = "$caller\::$name";
-            *{"$caller\::$name"} = sub () { $obj };
+            my $fq_name = $storage->{$name} = "$caller\::$name";
+            *{$fq_name} = sub () { $fq_name };
         }
     }
 
-    Mouse::Util::TypeConstraints->import({ into => $caller }, $class);
+    Mouse::Util::TypeConstraints->import({ into => $caller });
 }
 
 sub _import {
-    my($type_class, $pkg, @types) = @_;
+    my($type_class, $pkg, undef, @types) = @_;
+
     no strict 'refs';
     for my $name (@types) {
-        my $obj = $type_class->type_storage->{$name};
-        $obj = $type_class->type_storage->{$name} = MouseX::Types::TypeDecorator->new($obj)
-            unless ref($obj);
+        my $fq_name = $type_class->type_storage->{$name};
+
+        my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name) || $fq_name;
         *{"$pkg\::$name"} = sub () { $obj };
     }
 }
