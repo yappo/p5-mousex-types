@@ -7,6 +7,7 @@ inc/Module/Install/Fetch.pm
 inc/Module/Install/Include.pm
 inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
+inc/Module/Install/Repository.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 inc/Scalar/Util.pm
@@ -22,6 +23,7 @@ README
 t/001-make_immutable.t
 t/002-base.t
 t/003-isa-or.t
+t/004-parametarization.t
 t/00_compile.t
 xt/01_podspell.t
 xt/02_perlcritic.t
