@@ -17,28 +17,26 @@ sub import {
     }
 
     if(my $declare = $args{-declare}){
-        if(ref($declare) eq 'ARRAY'){
-            my $storage = $type_class->type_storage();
-            for my $name (@{ $declare }) {
-                my $fq_name = $storage->{$name} = $type_class . '::' . $name;
-
-                my $type = sub {
-                    my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name);
-                    if($obj){
-                        no strict 'refs';
-                        no warnings 'redefine';
-                        *{$fq_name} = _generate_type($obj);
-                        goto &{$fq_name};
-                     }
-                     return $fq_name;
-                };
-
-                no strict;
-                *{$fq_name} = $type;
-            }
-        }
-        else{
+        if(ref($declare) ne 'ARRAY'){
             Carp::croak("You must pass an ARRAY reference to -declare");
+        }
+        my $storage = $type_class->type_storage();
+        for my $name (@{ $declare }) {
+            my $fq_name = $storage->{$name} = $type_class . '::' . $name;
+
+            my $type = sub {
+                my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name);
+                if($obj){
+                    no strict 'refs';
+                    no warnings 'redefine';
+                    *{$fq_name} = _generate_type($obj);
+                    goto &{$fq_name};
+                 }
+                 return $fq_name;
+            };
+
+            no strict;
+            *{$fq_name} = $type;
         }
     }
 
