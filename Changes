@@ -1,6 +1,6 @@
 Revision history for Perl extension MouseX::Types
 
-0.03
+0.02_01 Sat Dec 12 17:24:00 2009
     - Refactoring for new Mouse (gfx)
     - Fix import to warn about undefined types (gfx)
 
