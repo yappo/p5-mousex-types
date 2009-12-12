@@ -4,7 +4,7 @@ all_from 'lib/MouseX/Types.pm';
 
 requires 'Mouse' => 0.15;
 
-tests 't/*.t';
+tests 't/*.t t/*/*.t';
 author_tests 'xt';
 
 build_requires 'Test::More';
