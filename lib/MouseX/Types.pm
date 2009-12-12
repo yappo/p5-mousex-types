@@ -32,9 +32,10 @@ sub _do_import {
 
     for my $name (@types) {
         my $fq_name = $type_class->type_storage->{$name}
-            || Carp::croak(qq{"$name" is not exported by the $type_class module});
+            || Carp::croak(qq{"$name" is not exported by $type_class});
 
-        my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name) || $fq_name;
+        my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name)
+            || Carp::croak(qq{"$name" is declared but not defined in $type_class});
 
         no strict 'refs';
         *{$into . '::' . $name} = sub () { $obj };

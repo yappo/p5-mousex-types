@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More tests => 16;
 
-{
+BEGIN{
     package Types;
     use MouseX::Types -declare => [qw/ Headers /];
     use MouseX::Types::Mouse 'HashRef';
@@ -15,7 +15,7 @@ use Test::More tests => 16;
     ;
 }
 
-{
+BEGIN{
     package Types2;
     use MouseX::Types -declare => [qw/ Headers /];
     use MouseX::Types::Mouse 'HashRef';
