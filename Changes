@@ -1,7 +1,8 @@
 Revision history for Perl extension MouseX::Types
 
 0.03
-    - Fix import to warn about exporting undefined types
+    - Refactoring for new Mouse (gfx)
+    - Fix import to warn about undefined types (gfx)
 
 0.02
     - Fix a test to avoid warnings
