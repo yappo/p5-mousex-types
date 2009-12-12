@@ -10,15 +10,35 @@ sub import {
 
     my $type_class = caller;
 
-    no strict 'refs';
-    *{$type_class . '::import'} = \&_do_import;
-    push @{$type_class . '::ISA'}, 'MouseX::Types::Base';
+    {
+        no strict 'refs';
+        *{$type_class . '::import'} = \&_do_import;
+        push @{$type_class . '::ISA'}, 'MouseX::Types::Base';
+    }
 
-    if (defined $args{'-declare'} && ref($args{'-declare'}) eq 'ARRAY') {
-        my $storage = $type_class->type_storage();
-        for my $name (@{ $args{'-declare'} }) {
-            my $fq_name = $storage->{$name} = $type_class . '::' . $name;
-            *{$fq_name} = sub () { $fq_name };
+    if(my $declare = $args{-declare}){
+        if(ref($declare) eq 'ARRAY'){
+            my $storage = $type_class->type_storage();
+            for my $name (@{ $declare }) {
+                my $fq_name = $storage->{$name} = $type_class . '::' . $name;
+
+                my $type = sub {
+                    my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name);
+                    if($obj){
+                        no strict 'refs';
+                        no warnings 'redefine';
+                        *{$fq_name} = _generate_type($obj);
+                        goto &{$fq_name};
+                     }
+                     return $fq_name;
+                };
+
+                no strict;
+                *{$fq_name} = $type;
+            }
+        }
+        else{
+            Carp::croak("You must pass an ARRAY reference to -declare");
         }
     }
 
@@ -41,22 +61,28 @@ sub _do_import {
         my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name)
             || Carp::croak(qq{"$name" is declared but not defined in $type_class});
 
-        my $type = sub {
-            if(@_){ # parameterization
-                my $param = shift;
-                if(@_ || ref($param) ne 'ARRAY'){
-                    Carp::croak("Syntax error in type definition (you must $name\[...])");
-                }
-                return $obj->parameterize($param);
-            }
-            else{
-                return $obj;
-            }
-        };
-
         no strict 'refs';
-        *{$into . '::' . $name} = $type;
+        *{$into . '::' . $name} = _generate_type($obj);
     }
+}
+
+sub _generate_type {
+    my($type_constraint) = @_;
+    return sub {
+        if(@_){ # parameterization
+            my $param = shift;
+            if(@_){
+                Carp::croak("Syntax error in type definition");
+            }
+            if(!(ref($param) eq 'ARRAY' && @{$param} == 1)){
+                Carp::croak("Syntax error in type definition (you must pass an ARRAY reference of a type)");
+            }
+            return $type_constraint->parameterize(@{$param});
+        }
+        else{
+            return $type_constraint;
+        }
+    };
 }
 
 {
