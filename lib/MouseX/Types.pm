@@ -26,27 +26,49 @@ sub import {
 }
 
 sub _do_import {
-    my($type_class, @types) = @_;
+    my $type_class = shift;
+    my $into       = Mouse::Exporter::_get_caller_package(ref $_[0] ? shift : undef);
 
-    my $into = caller;
+    my $storage = $type_class->type_storage;
+
+    my %uniq;
+    my @types = grep{ !$uniq{$_}++ } map{ $_ eq ':all' ?  keys(%{$storage}) : $_ } @_;
 
     for my $name (@types) {
-        my $fq_name = $type_class->type_storage->{$name}
+        my $fq_name = $storage->{$name}
             || Carp::croak(qq{"$name" is not exported by $type_class});
 
         my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name)
             || Carp::croak(qq{"$name" is declared but not defined in $type_class});
 
+        my $type = sub {
+            if(@_){ # parameterization
+                my $param = shift;
+                if(@_ || ref($param) ne 'ARRAY'){
+                    Carp::croak("Syntax error in type definition (you must $name\[...])");
+                }
+                return $obj->parameterize($param);
+            }
+            else{
+                return $obj;
+            }
+        };
+
         no strict 'refs';
-        *{$into . '::' . $name} = sub () { $obj };
+        *{$into . '::' . $name} = $type;
     }
 }
 
 {
     package MouseX::Types::Base;
     my %storage;
-    sub type_storage {
-        $storage{$_[0]} ||= +{}
+    sub type_storage { # can be overriden
+        return $storage{$_[0]} ||= +{}
+    }
+
+    sub type_names {
+        my($class) = @_;
+        return keys %{$class->type_storage};
     }
 }
 
