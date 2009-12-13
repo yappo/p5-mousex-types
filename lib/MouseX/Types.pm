@@ -12,7 +12,7 @@ sub import {
 
     {
         no strict 'refs';
-        *{$type_class . '::import'} = \&_do_import;
+        *{$type_class . '::import'} = \&_initialize_import;
         push @{$type_class . '::ISA'}, 'MouseX::Types::Base';
     }
 
@@ -27,10 +27,13 @@ sub import {
             my $type = sub {
                 my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name);
                 if($obj){
+                    my $type = $type_class->_generate_type($obj);
+
                     no strict 'refs';
                     no warnings 'redefine';
-                    *{$fq_name} = _generate_type($obj);
-                    goto &{$fq_name};
+                    *{$fq_name} = $type;
+
+                    goto &{$type};
                  }
                  return $fq_name;
             };
@@ -43,45 +46,41 @@ sub import {
     Mouse::Util::TypeConstraints->import({ into => $type_class });
 }
 
-sub _do_import {
-    my $type_class = shift;
-    my $into       = Mouse::Exporter::_get_caller_package(ref $_[0] ? shift : undef);
+sub _initialize_import {
+    my $type_class = $_[0];
 
     my $storage = $type_class->type_storage;
 
-    my %uniq;
-    my @types = grep{ !$uniq{$_}++ } map{ $_ eq ':all' ?  keys(%{$storage}) : $_ } @_;
+    my @exporting;
 
-    for my $name (@types) {
+    for my $name ($type_class->type_names) {
         my $fq_name = $storage->{$name}
             || Carp::croak(qq{"$name" is not exported by $type_class});
 
         my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name)
             || Carp::croak(qq{"$name" is declared but not defined in $type_class});
 
+        push @exporting, $name;
+
         no strict 'refs';
-        *{$into . '::' . $name} = _generate_type($obj);
+        no warnings 'redefine';
+        *{$type_class . '::' . $name} =$type_class->_generate_type($obj);
     }
+
+    my($import, $unimport) = Mouse::Exporter->build_import_methods(
+        exporting_package => $type_class,
+        as_is             => \@exporting,
+        groups            => { default => [] },
+    );
+
+    no warnings 'redefine';
+    no strict 'refs';
+    *{$type_class . '::import'}   = $import;   # redefine myself!
+    *{$type_class . '::unimport'} = $unimport;
+
+    goto &{$import};
 }
 
-sub _generate_type {
-    my($type_constraint) = @_;
-    return sub {
-        if(@_){ # parameterization
-            my $param = shift;
-            if(@_){
-                Carp::croak("Syntax error in type definition");
-            }
-            if(!(ref($param) eq 'ARRAY' && @{$param} == 1)){
-                Carp::croak("Syntax error in type definition (you must pass an ARRAY reference of a type)");
-            }
-            return $type_constraint->parameterize(@{$param});
-        }
-        else{
-            return $type_constraint;
-        }
-    };
-}
 
 {
     package MouseX::Types::Base;
@@ -93,6 +92,25 @@ sub _generate_type {
     sub type_names {
         my($class) = @_;
         return keys %{$class->type_storage};
+    }
+
+    sub _generate_type {
+        my($type_class, $type_constraint) = @_;
+        return sub {
+            if(@_){ # parameterization
+                my $param = shift;
+                if(@_){
+                    Carp::croak("Syntax error using type $type_constraint");
+                }
+                if(!(ref($param) eq 'ARRAY' && @{$param} == 1)){
+                    Carp::croak("Syntax error using type $type_constraint (you must pass an ARRAY reference of a parameter type)");
+                }
+                return $type_constraint->parameterize(@{$param});
+            }
+            else{
+                return $type_constraint;
+            }
+        };
     }
 }
 
