@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 15;
+use Test::More tests => 16;
 
 use MouseX::Types::Mouse qw(ArrayRef HashRef Maybe Str);
 
@@ -32,4 +32,21 @@ ok $@;
 eval {
     $t = ArrayRef([Str, Str]);
 };
+
 ok $@;
+
+eval q{
+    package Class;
+    use Mouse;
+    use MouseX::Types::Mouse qw(ArrayRef Str);
+
+    has foo => (
+        is => 'rw',
+        isa => ArrayRef[Str],
+
+        requires => 1,
+    );
+};
+
+is $@, '';
+
