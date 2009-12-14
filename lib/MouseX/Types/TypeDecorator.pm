@@ -1,4 +1,4 @@
-package MouseX::Types::TypeDecolator;
+package MouseX::Types::TypeDecorator;
 use strict;
 use warnings;
 
