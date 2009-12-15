@@ -11,6 +11,5 @@ test_requires 'Test::More';
 test_requires 'Test::Exception';
 test_requires 'Scalar::Util';
 
-auto_include;
 auto_set_repository;
 WriteAll;
