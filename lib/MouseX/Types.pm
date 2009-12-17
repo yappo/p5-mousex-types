@@ -2,7 +2,7 @@ package MouseX::Types;
 use 5.006_002;
 use Mouse::Exporter; # turns on strict and warnings
 
-our $VERSION = '0.02_02';
+our $VERSION = '0.02_03';
 
 use Mouse::Util::TypeConstraints ();
 
