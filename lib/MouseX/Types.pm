@@ -34,7 +34,7 @@ sub import {
                     no warnings 'redefine';
                     *{$fq_name} = $type;
 
-                    goto &{$type};
+                    return &{$type};
                  }
                  return $fq_name;
             };
