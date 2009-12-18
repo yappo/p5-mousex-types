@@ -13,7 +13,7 @@ __END__
 
 =head1 NAME
 
-MouseX::Types::Moose - Types shipped with Mouse
+MouseX::Types::Mouse - Types shipped with Mouse
 
 =head1 SYNOPSIS
 
