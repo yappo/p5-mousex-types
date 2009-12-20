@@ -1,5 +1,8 @@
 Revision history for Perl extension MouseX::Types
 
+0.03 Sun Dec 20 15:13:39 2009
+    - Shipped as a stable version
+
 0.02_03 Thu Dec 17 14:16:53 2009
     - Fix segmentation fault issue on older perls (gfx)
 
