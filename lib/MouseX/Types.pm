@@ -190,13 +190,15 @@ MouseX::Types - Organize your Mouse types in libraries
 
   1;
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Kazuhiro Osawa E<lt>yappo <at> shibuya <döt> plE<gt>
 
 Shawn M Moore
 
 tokuhirom
+
+Goro Fuji
 
 with plenty of code borrowed from L<MooseX::Types>
 
