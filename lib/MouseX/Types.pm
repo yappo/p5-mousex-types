@@ -61,11 +61,12 @@ sub _initialize_import {
         my $obj = Mouse::Util::TypeConstraints::find_type_constraint($fq_name)
             || Carp::croak(qq{"$name" is declared but not defined in $type_class});
 
-        push @exporting, $name;
+        push @exporting, $name, 'is_' . $name;
 
         no strict 'refs';
         no warnings 'redefine';
-        *{$type_class . '::' . $name} =$type_class->_generate_type($obj);
+        *{$type_class . '::'    . $name} = $type_class->_generate_type($obj);
+        *{$type_class . '::is_' . $name} = $obj->_compiled_type_constraint;
     }
 
     my($import, $unimport) = Mouse::Exporter->build_import_methods(
