@@ -215,7 +215,7 @@ L<MooseX::Types>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2008-2009, Kazuhiro Osawa and partly based on MooseX::Types, which
+Copyright (c) 2008-2010, Kazuhiro Osawa and partly based on MooseX::Types, which
 is (c) Robert Sedlacek.
 
 This library is free software; you can redistribute it and/or modify
