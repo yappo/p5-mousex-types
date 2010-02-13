@@ -10,3 +10,5 @@ yappo <at> shibuya <döt> pl
 MouseX::Types
 Shawn M Moore
 tokuhirom
+Goro
+Sedlacek
