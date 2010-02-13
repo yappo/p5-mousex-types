@@ -1,8 +1,12 @@
 Revision history for Perl extension MouseX::Types
 
+0.05 Sat Feb 13 16:08:44 2010
+    - No functional changes (gfx)
+    - Fix a typo in the tests (gfx)
+
 0.04 Sun Jan  3 10:23:47 2010
     - Add copyright information (RT #53013)
-    - Support type predicates
+    - Support type predicates (gfx)
         (e.g. "use MouseX::Types::Mouse qw(is_Int)")
 
 0.03 Sun Dec 20 15:13:39 2009
