@@ -44,7 +44,7 @@ eval q{
         is => 'rw',
         isa => ArrayRef[Str],
 
-        requires => 1,
+        required => 1,
     );
 };
 
