@@ -19,3 +19,4 @@
 ^\.shipit$
 \.git
 t/100-compat/
+MYMETA\.(?:json|yml)$
