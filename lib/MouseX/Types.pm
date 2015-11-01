@@ -39,7 +39,7 @@ sub import {
                  return $fq_name;
             };
 
-            no strict;
+            no strict; ## no critic
             *{$fq_name} = $type;
         }
     }
