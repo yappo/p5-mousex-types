@@ -16,6 +16,17 @@ Then install it:
 
     % make install
 
+Note that manual installation requires the following modules before you can
+run the above `perl Makefile.PL` command:
+
+    * Module::Install
+    * Module::Install::AuthorTests
+    * Module::Install::Repository
+
+
+You will then need to install other prerequisites listed by `perl Makefile.PL`
+to complete the build.
+
 DOCUMENTATION
 
 MouseX::Types documentation is available as in POD. So you can do:
