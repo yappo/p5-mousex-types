@@ -19,6 +19,5 @@ for my $t (@types) {
     else {
         diag "Skipping $t() call test";
     }
-    local $TODO = 'is_T is not supported by MouseX::Types';
     ok __PACKAGE__->can("is_$t"), "is_$t() was exported";
 }
